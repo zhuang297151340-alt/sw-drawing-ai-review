@@ -1,0 +1,60 @@
+preset: mold
+name: 模具与工装
+extends: gb_baseline
+description: 在 GB 基线上叠加拔模斜度、成型面粗糙度、硬度与热处理要求
+
+rules:
+  - id: MOLD-DRAFT
+    name: 未标注拔模斜度
+    category: 技术要求
+    severity: critical
+    mode: text_contains
+    params:
+      patterns: ["拔模", "脱模", "斜度"]
+    message: 模具成型件未标注拔模斜度
+    suggestion: 注明拔模方向与角度，如『拔模斜度 1°』
+    standard: 企业模具规范
+
+  - id: MOLD-RA
+    name: 成型面粗糙度未规定
+    category: 粗糙度
+    severity: major
+    mode: text_contains
+    params:
+      patterns: ["Ra", "镜面", "抛光", "VDI", "SPI"]
+    message: 成型面未规定粗糙度/纹理等级
+    suggestion: 标注成型面 Ra 或 VDI/SPI 纹理号
+    standard: VDI 3400 / SPI
+
+  - id: MOLD-HARD
+    name: 未规定硬度与热处理
+    category: 技术要求
+    severity: major
+    mode: text_contains
+    params:
+      patterns: ["HRC", "硬度", "淬火", "热处理", "氮化"]
+    message: 未规定模具零件硬度或热处理要求
+    suggestion: 注明材料热处理与硬度，如『淬火 HRC 48-52』
+    standard: GB/T 230.1
+
+  - id: MOLD-EDM
+    name: 未说明放电/线切割要求
+    category: 技术要求
+    severity: minor
+    mode: text_contains
+    params:
+      patterns: ["放电", "线切割", "EDM", "WEDM", "清角"]
+    message: 未说明放电加工或线切割要求
+    suggestion: 注明清角方式与最小 R 角
+    standard: 企业工艺规范
+
+  - id: MOLD-FIT
+    name: 未规定配合间隙
+    category: 技术要求
+    severity: major
+    mode: text_contains
+    params:
+      patterns: ["间隙", "配合", "H7", "h6"]
+    message: 未规定配合间隙或配合公差要求
+    suggestion: 注明关键配合间隙值及公差带
+    standard: GB/T 1801

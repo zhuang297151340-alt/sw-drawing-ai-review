@@ -1,0 +1,60 @@
+preset: automotive
+name: 汽车零部件（IATF 16949）
+extends: gb_baseline
+description: 在 GB 基线上叠加 IATF 16949 / PPAP / 清洁度 / 关键特性标识要求
+
+rules:
+  - id: AUTO-IATF
+    name: 未声明 IATF 16949 体系要求
+    category: 技术要求
+    severity: major
+    mode: text_contains
+    params:
+      patterns: ["IATF", "16949", "PPAP"]
+    message: 汽车零部件图纸未引用 IATF 16949 / PPAP 相关要求
+    suggestion: 技术要求中增加体系与提交等级要求
+    standard: IATF 16949
+
+  - id: AUTO-CLEAN
+    name: 未规定清洁度
+    category: 技术要求
+    severity: major
+    mode: text_contains
+    params:
+      patterns: ["清洁度", "ISO 16232", "颗粒"]
+    message: 未规定零件清洁度要求
+    suggestion: 增加清洁度要求，如『清洁度按 ISO 16232，颗粒 ≤ 0.5mg』
+    standard: ISO 16232
+
+  - id: AUTO-SC
+    name: 未标识关键/特殊特性
+    category: 技术要求
+    severity: critical
+    mode: text_contains
+    params:
+      patterns: ["特殊特性", "关键特性", "CC", "SC", "▽"]
+    message: 未标识关键特性（CC）/特殊特性（SC）
+    suggestion: 用符号标识 CC/SC 并在技术要求中说明
+    standard: IATF 16949
+
+  - id: AUTO-CPK
+    name: 未规定过程能力要求
+    category: 技术要求
+    severity: minor
+    mode: text_contains
+    params:
+      patterns: ["Cpk", "CPK", "过程能力", "Ppk"]
+    message: 未规定关键尺寸的过程能力指数要求
+    suggestion: 增加『关键尺寸 Cpk ≥ 1.67』
+    standard: IATF 16949
+
+  - id: AUTO-TRACE
+    name: 未规定批次追溯
+    category: 技术要求
+    severity: minor
+    mode: text_contains
+    params:
+      patterns: ["追溯", "批次", "标识"]
+    message: 未规定零件批次追溯标识要求
+    suggestion: 增加追溯标识要求（激光打码/批次号）
+    standard: IATF 16949

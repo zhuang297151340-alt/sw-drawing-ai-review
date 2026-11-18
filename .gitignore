@@ -1,0 +1,52 @@
+# Build output
+build/
+dist/
+bin/
+obj/
+*.dll
+*.exe
+*.pdb
+*.msi
+*.zip
+
+# Local Python runtime and caches
+.venv/
+python/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Secrets and local configuration
+qc_addin_config.ini
+*.key
+*.pem
+.env
+.env.*
+!config/qc_addin_config.example.ini
+
+# SOLIDWORKS proprietary interop and local vendor files
+vendor/solidworks/
+
+# Drawings, exports and customer data
+*.sldprt
+*.sldasm
+*.slddrw
+*.dxf
+*.dwg
+*.step
+*.stp
+*.iges
+*.igs
+*.pdf
+reports/
+logs/
+temp/
+
+# Editors / OS
+.vs/
+.vscode/
+*.user
+*.suo
+Thumbs.db
+Desktop.ini
+

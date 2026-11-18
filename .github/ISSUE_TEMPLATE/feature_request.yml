@@ -1,0 +1,23 @@
+name: 功能建议
+description: 提议新的审核能力或工作流改进
+title: "[功能] "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: 要解决的工程问题
+      description: 请先说明实际审图场景和现有流程的不足。
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: 建议方案
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: 可验证的验收标准
+

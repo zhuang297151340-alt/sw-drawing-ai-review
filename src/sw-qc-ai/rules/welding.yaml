@@ -1,0 +1,60 @@
+preset: welding
+name: 焊接结构件
+extends: gb_baseline
+description: 在 GB 基线上叠加焊接符号、探伤、去应力与坡口要求
+
+rules:
+  - id: WELD-SYM
+    name: 未标注焊接符号
+    category: 技术要求
+    severity: critical
+    mode: text_contains
+    params:
+      patterns: ["焊", "焊缝", "GB/T 324", "GB/T 12212"]
+    message: 焊接件未见焊接符号或焊缝标注
+    suggestion: 按 GB/T 324 标注焊缝形式、尺寸与数量
+    standard: GB/T 324
+
+  - id: WELD-NDT
+    name: 未规定探伤要求
+    category: 技术要求
+    severity: major
+    mode: text_contains
+    params:
+      patterns: ["探伤", "UT", "RT", "MT", "PT", "无损检测"]
+    message: 未规定焊缝无损检测要求与等级
+    suggestion: 注明检测方法、比例与合格级别，如『UT 100% GB/T 11345 Ⅱ级』
+    standard: GB/T 11345
+
+  - id: WELD-STRESS
+    name: 未规定去应力处理
+    category: 技术要求
+    severity: major
+    mode: text_contains
+    params:
+      patterns: ["去应力", "消除应力", "退火", "时效"]
+    message: 焊接结构件未规定去应力处理
+    suggestion: 增加『焊后去应力退火』要求
+    standard: GB/T 16924
+
+  - id: WELD-GROOVE
+    name: 未标注坡口形式
+    category: 尺寸
+    severity: major
+    mode: text_contains
+    params:
+      patterns: ["坡口", "V形", "U形", "钝边", "间隙"]
+    message: 未标注坡口形式与尺寸
+    suggestion: 标注坡口角度、钝边与根部间隙
+    standard: GB/T 985.1
+
+  - id: WELD-MAT
+    name: 未规定焊材
+    category: 技术要求
+    severity: major
+    mode: text_contains
+    params:
+      patterns: ["焊条", "焊丝", "ER", "E43", "E50", "J4", "J5"]
+    message: 未规定焊接材料牌号
+    suggestion: 注明焊材型号，如『ER50-6 φ1.2』
+    standard: GB/T 5117

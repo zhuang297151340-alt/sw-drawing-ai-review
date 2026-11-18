@@ -1,0 +1,60 @@
+preset: hydraulic
+name: 液压元件
+extends: gb_baseline
+description: 在 GB 基线上叠加密封面粗糙度、清洁度 ISO 4406、试压与去毛刺要求
+
+rules:
+  - id: HYD-SEAL
+    name: 密封面粗糙度未规定
+    category: 粗糙度
+    severity: critical
+    mode: text_contains
+    params:
+      patterns: ["Ra 0.2", "Ra0.2", "Ra 0.4", "Ra0.4", "密封面"]
+    message: 密封面未规定 Ra 0.2~0.4 的粗糙度要求
+    suggestion: 密封配合面标注 Ra 0.2~0.4，并注明不允许螺旋刀纹
+    standard: GB/T 131
+
+  - id: HYD-CLEAN
+    name: 未规定清洁度等级
+    category: 技术要求
+    severity: major
+    mode: text_contains
+    params:
+      patterns: ["ISO 4406", "清洁度", "NAS", "颗粒度"]
+    message: 液压件未规定油液清洁度等级
+    suggestion: 注明清洁度，如『清洁度 ISO 4406 18/16/13』
+    standard: ISO 4406
+
+  - id: HYD-TEST
+    name: 未规定试压要求
+    category: 技术要求
+    severity: critical
+    mode: text_contains
+    params:
+      patterns: ["试压", "耐压", "保压", "试验压力", "MPa"]
+    message: 未规定耐压/试压试验要求
+    suggestion: 注明试验压力与保压时间，如『2.5MPa 保压 5min 不得渗漏』
+    standard: GB/T 7939
+
+  - id: HYD-DEBURR
+    name: 未强调交叉孔去毛刺
+    category: 技术要求
+    severity: major
+    mode: text_contains
+    params:
+      patterns: ["去毛刺", "倒钝", "交叉孔", "毛刺"]
+    message: 未强调油道交叉孔去毛刺要求
+    suggestion: 增加『油道交叉孔必须去毛刺，不允许残留金属屑』
+    standard: 企业液压规范
+
+  - id: HYD-CHAMFER
+    name: 未规定孔口倒角
+    category: 尺寸
+    severity: minor
+    mode: text_contains
+    params:
+      patterns: ["倒角", "C0", "C1", "孔口"]
+    message: 未规定孔口倒角要求
+    suggestion: 增加『油道孔口倒角 C0.5，去除锐边』
+    standard: GB/T 4458.4

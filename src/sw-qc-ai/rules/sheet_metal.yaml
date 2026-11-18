@@ -1,0 +1,60 @@
+preset: sheet_metal
+name: 钣金件
+extends: gb_baseline
+description: 在 GB 基线上叠加板厚、折弯半径、展开图与毛刺方向要求
+
+rules:
+  - id: SM-THICK
+    name: 未标注板厚
+    category: 技术要求
+    severity: critical
+    mode: text_contains
+    params:
+      patterns: ["板厚", "料厚", "t=", "T=", "厚"]
+    message: 钣金件未标注材料厚度
+    suggestion: 在标题栏或技术要求中标注板厚，如『板厚 t=2.0』
+    standard: GB/T 708
+
+  - id: SM-BEND-R
+    name: 未标注折弯内半径
+    category: 尺寸
+    severity: major
+    mode: text_contains
+    params:
+      patterns: ["折弯", "内R", "内圆角", "R角", "弯曲半径"]
+    message: 未标注折弯内半径
+    suggestion: 标注折弯内 R（一般取 t~2t），避免裂纹
+    standard: 企业钣金规范
+
+  - id: SM-FLAT
+    name: 缺少展开图
+    category: 视图
+    severity: major
+    mode: text_contains
+    params:
+      patterns: ["展开", "展开图", "下料"]
+    message: 未提供展开图或下料尺寸
+    suggestion: 补充展开图并注明展开长度计算依据（K 因子）
+    standard: 企业钣金规范
+
+  - id: SM-GRAIN
+    name: 未规定毛刺方向
+    category: 技术要求
+    severity: minor
+    mode: text_contains
+    params:
+      patterns: ["毛刺", "去毛刺", "冲切面"]
+    message: 未规定毛刺朝向或去毛刺要求
+    suggestion: 注明『毛刺朝向内侧/去除毛刺』
+    standard: 企业钣金规范
+
+  - id: SM-TOL
+    name: 未引用钣金一般公差
+    category: 技术要求
+    severity: major
+    mode: text_contains
+    params:
+      patterns: ["GB/T 1804", "GB/T 13914", "冲压件", "未注公差"]
+    message: 未引用钣金/冲压件公差标准
+    suggestion: 增加『未注公差按 GB/T 13914』或 GB/T 1804-m
+    standard: GB/T 13914

@@ -1,0 +1,60 @@
+preset: gear
+name: 齿轮类零件
+extends: gb_baseline
+description: 在 GB 基线上叠加齿轮参数表、精度等级与齿面要求
+
+rules:
+  - id: GEAR-PARAM
+    name: 缺少齿轮参数表
+    category: 技术要求
+    severity: critical
+    mode: text_contains
+    params:
+      patterns: ["模数", "齿数", "压力角", "螺旋角", "变位系数"]
+    message: 齿轮零件缺少齿轮参数表（模数/齿数/压力角）
+    suggestion: 图纸右上角补齿轮参数表，至少含模数、齿数、压力角、精度等级
+    standard: GB/T 4459.2
+
+  - id: GEAR-ACC
+    name: 未标注齿轮精度等级
+    category: 公差
+    severity: critical
+    mode: text_contains
+    params:
+      patterns: ["GB/T 10095", "精度等级", "7级", "6级", "8级"]
+    message: 未标注齿轮精度等级
+    suggestion: 注明精度等级，如『GB/T 10095.1 7-7-6 GB/T 10095.2』
+    standard: GB/T 10095
+
+  - id: GEAR-BACKLASH
+    name: 未规定齿侧间隙
+    category: 公差
+    severity: major
+    mode: text_contains
+    params:
+      patterns: ["侧隙", "齿侧间隙", "最小侧隙"]
+    message: 未规定齿侧间隙要求
+    suggestion: 注明最小/最大齿侧间隙
+    standard: GB/T 10095
+
+  - id: GEAR-HEAT
+    name: 未规定齿面热处理
+    category: 技术要求
+    severity: major
+    mode: text_contains
+    params:
+      patterns: ["渗碳", "淬火", "齿面硬度", "氮化", "调质", "HRC"]
+    message: 未规定齿面热处理与硬度
+    suggestion: 注明热处理方式与有效硬化层深度、齿面硬度范围
+    standard: GB/T 3480
+
+  - id: GEAR-RA
+    name: 齿面粗糙度未规定
+    category: 粗糙度
+    severity: major
+    mode: text_contains
+    params:
+      patterns: ["Ra", "齿面"]
+    message: 未规定齿面粗糙度
+    suggestion: 齿面标注 Ra 0.8~1.6（按精度等级）
+    standard: GB/T 131

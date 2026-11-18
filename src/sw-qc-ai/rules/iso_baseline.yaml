@@ -1,0 +1,57 @@
+preset: iso_baseline
+name: ISO 基线（出口/外协图纸）
+description: 面向 ISO 体系的通用审图规则，等价于 GB 基线的 ISO 版本
+
+rules:
+  - id: ISO-MAT
+    name: Material not specified
+    category: 标题栏
+    severity: critical
+    mode: field_check
+    params: { field: 材料 }
+    message: 标题栏未检出材料字段
+    suggestion: 补充材料牌号及标准号，如 S355JR EN 10025-2
+    standard: ISO 128
+
+  - id: ISO-DIM
+    name: No dimensions found
+    category: 尺寸
+    severity: critical
+    mode: count_threshold
+    params: { metric: dimension_total, min: 1 }
+    message: 图纸中未检出任何尺寸标注，零件无法制造
+    suggestion: 补齐定形尺寸与定位尺寸
+    standard: ISO 129
+
+  - id: ISO-TOL
+    name: 未引用 ISO 2768
+    category: 技术要求
+    severity: major
+    mode: text_contains
+    params:
+      patterns: ["ISO 2768", "ISO2768", "未注公差"]
+    message: 技术要求中未引用 ISO 2768 一般公差
+    suggestion: 增加『General tolerances ISO 2768-mK』
+    standard: ISO 2768
+
+  - id: ISO-RA
+    name: 未规定表面粗糙度
+    category: 粗糙度
+    severity: major
+    mode: text_contains
+    params:
+      patterns: ["Ra", "roughness", "ISO 1302"]
+    message: 未检出粗糙度标注或技术要求
+    suggestion: 按 ISO 1302 标注 Ra 值
+    standard: ISO 1302
+
+  - id: ISO-GDT
+    name: 未检出形位公差
+    category: 公差
+    severity: major
+    mode: text_contains
+    params:
+      patterns: ["ISO 1101", "⊕", "⌖", "∥", "⊥", "◎"]
+    message: 未引用 ISO 1101 或未标注形位公差
+    suggestion: 按 ISO 1101 标注 GD&T，或引用 ISO 2768-K 未注形位公差
+    standard: ISO 1101

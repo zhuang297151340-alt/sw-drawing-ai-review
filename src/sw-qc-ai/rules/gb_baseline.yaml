@@ -1,0 +1,190 @@
+# GB 基线规则预设 —— 通用机械零件审图
+# 规则模式：always / field_check / feature_check / count_threshold / text_contains
+preset: gb_baseline
+name: 通用机械零件（GB 基线）
+description: 材料必填、尺寸必标、GB/T 1804 与 GB/T 1184 引用、特征标注联动
+
+rules:
+  - id: GB-MAT
+    name: 材料未标注
+    category: 标题栏
+    severity: critical
+    mode: field_check
+    params: { field: 材料 }
+    message: 标题栏未检出材料字段
+    suggestion: 补充材料牌号及标准号，如 45 GB/T 699-2015
+    standard: GB/T 4458
+
+  - id: GB-NAME
+    name: 零件名称缺失
+    category: 标题栏
+    # 用户明确要求：零件名称缺失属于严重问题（原来误设为 major）
+    # 理由：没有零件名称，图纸无法受控归档、无法与 BOM 对应 —— 与"材料未标注"同级。
+    severity: critical
+    mode: field_check
+    params: { field: 名称 }
+    message: 标题栏未检出零件名称
+    suggestion: 补充零件名称
+    standard: GB/T 10609.1
+
+  - id: GB-DIM
+    name: 无尺寸标注
+    category: 尺寸
+    severity: critical
+    mode: count_threshold
+    params: { metric: dimension_total, min: 1 }
+    message: 图纸中未检出任何尺寸标注，零件无法制造
+    suggestion: 补齐定形尺寸与定位尺寸
+    standard: GB/T 4458.4
+
+  - id: GB-TOLTXT
+    name: 未引用一般公差标准
+    category: 技术要求
+    severity: major
+    mode: text_contains
+    params:
+      # 真实图纸写法五花八门：GB1804 / GB/T1804 / 未注尺寸公差 都要认
+      patterns: ["GB/T 1804", "GB1804", "GB 1804", "未注尺寸公差", "未注公差", "一般公差"]
+    message: 技术要求中未引用 GB/T 1804 未注尺寸公差
+    suggestion: 增加『未注尺寸公差按 GB/T 1804-m』
+    standard: GB/T 1804
+
+  - id: GB-GDT
+    name: 未引用未注形位公差标准
+    category: 技术要求
+    severity: major
+    mode: text_contains
+    params:
+      patterns: ["GB/T 1184", "GB1184", "GB 1184", "未注形位公差"]
+    message: 技术要求中未引用 GB/T 1184 未注形位公差
+    suggestion: 增加『未注形位公差按 GB/T 1184-K』
+    standard: GB/T 1184
+
+  - id: GB-RA
+    name: 未规定表面粗糙度
+    category: 粗糙度
+    severity: major
+    # 用「识别到的粗糙度条目数」而不是文本关键字：
+    # SolidWorks 的粗糙度写在符号块里，字面上没有 "Ra"，按关键字查会漏判
+    mode: count_threshold
+    params: { metric: roughness_count, min: 1 }
+    message: 图纸中未检出任何表面粗糙度标注（含符号块与「其余 N」统注）
+    suggestion: 标注各加工面 Ra 值，或用「其余 N」统注
+    standard: GB/T 131
+
+  - id: GB-DEBURR
+    name: 未要求去毛刺/倒钝
+    category: 技术要求
+    severity: minor
+    mode: text_contains
+    params:
+      patterns: ["去毛刺", "毛刺", "棱边", "倒钝"]
+    message: 技术要求缺少去毛刺或棱边倒钝要求
+    suggestion: 增加『去除毛刺，棱边倒钝』
+
+  - id: GB-NOTES
+    name: 缺少技术要求条目
+    category: 技术要求
+    severity: major
+    mode: count_threshold
+    params: { metric: tech_note_count, min: 1 }
+    message: 未检出技术要求文字块
+    suggestion: 补充技术要求（一般公差/热处理/表面处理/去毛刺）
+    standard: GB/T 4458
+
+  - id: GB-CONC
+    name: 同心结构未见配合公差
+    category: 公差
+    severity: minor
+    mode: feature_check
+    params:
+      feature: 同心圆组
+      # 只要图上出现任何一种公差写法就不再报（本工具无法把公差与具体几何关联，
+      # 所以这里只能做"全图有没有公差信息"的判断，宁可不报也不误报）
+      require_text: ["H7", "H8", "H6", "h6", "h7", "g6", "f7", "k6", "m6", "n6",
+                     "JS6", "P7", "±", "+0", "-0", "+ 0", "- 0"]
+    message: 检出同心圆组（{n} 个同心圆，{radii}），但全图未见配合公差代号或极限偏差
+    suggestion: 按配合性质对相关直径标注公差（如 φ…H7），或注明由 GB/T 1804 一般公差覆盖
+    standard: GB/T 1801
+
+  - id: GB-BEARING
+    name: 轴承配合孔缺少公差
+    category: 公差
+    severity: critical
+    mode: feature_check
+    params:
+      feature: 轴承安装孔（推定）
+      require_text: ["H7", "H6", "K6", "JS6", "M6", "N6", "P6"]
+    message: 图纸文字提到轴承，且检出同心圆组（{n} 个，{radii}），但未标注 H7 等轴承配合公差
+    suggestion: 对相应孔径标注 H7，并按需补圆柱度/同轴度与 Ra 0.4-0.8
+    standard: GB/T 1801
+
+  - id: GB-SHOULDER
+    name: 轴肩缺少跳动要求
+    category: 公差
+    severity: minor
+    mode: feature_check
+    params:
+      feature: 轴承安装轴肩（推定）
+      require_text: ["圆跳动", "跳动", "h6", "H6"]
+    message: 检出轴肩（{n} 个同心圆，{radii}），但未标注端面圆跳动
+    suggestion: 有轴向定位要求时标注端面圆跳动（如 0.02）
+    standard: GB/T 1184
+
+  - id: GB-KEYWAY
+    name: 键槽缺少公差
+    category: 公差
+    severity: major
+    mode: feature_check
+    params:
+      feature: 键槽
+      require_text: ["N9", "JS9", "P9", "对称度"]
+    message: 检出键槽，但未标注宽度公差 N9 或对称度
+    suggestion: 键槽宽标注 N9，并注对称度
+    standard: GB/T 1095
+
+  - id: THD-002
+    name: 螺纹未标注螺距
+    category: 尺寸
+    severity: major
+    mode: thread_pitch
+    params: {}
+    message: 该螺纹规格必须标注螺距，或螺距不在标准系列内
+    suggestion: 补标螺距，如 M32×2；粗牙规格可省略螺距
+    standard: GB/T 193
+
+  - id: GB-THREAD
+    name: 螺纹标注不完整
+    category: 尺寸
+    severity: major
+    mode: feature_check
+    params:
+      feature: 螺纹孔
+      require_text: ["M", "G", "Rc", "Rp", "Tr"]
+    message: 检出螺纹孔，但未标注完整螺纹规格与深度
+    suggestion: 标注 Mxx-6H 与螺纹深度，如 M10-6H ↧20
+    standard: GB/T 4459.1
+
+  - id: GB-PATTERN
+    name: 孔组缺少位置度
+    category: 公差
+    severity: major
+    mode: feature_check
+    params:
+      feature: 孔组
+      require_text: ["位置度", "POS"]
+    message: 检出孔组（阵列孔），但未标注位置度
+    suggestion: 标注分布圆直径/间距、数量与位置度
+    standard: GB/T 1182
+
+  - id: GB-CHAMFER
+    name: 倒角未标注
+    category: 尺寸
+    severity: minor
+    mode: feature_check
+    params:
+      feature: 倒角
+      require_text: ["C", "倒角", "未注"]
+    message: 检出倒角几何，但未见 C 值或未注倒角条款
+    suggestion: 标注 C1/C2，或用技术要求『未注倒角 C1』统一覆盖
+    standard: GB/T 4458.4
