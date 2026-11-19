@@ -1,4 +1,4 @@
-<img width="1116" height="839" alt="main-dimensions" src="https://github.com/user-attachments/assets/08fc41da-febf-4691-97c5-e2138c7bc680" /># SW 工程图 AI 审核插件
+ SW 工程图 AI 审核插件
 
 面向机械设计工程师的 SOLIDWORKS 工程图审核工具。插件以 **SOLIDWORKS 原生工程图审查** 为主功能：采用「本地规则检查 + AI 语义分析」相结合的方式，辅助机械设计人员发现工程图中的设计缺陷与制造风险
 
